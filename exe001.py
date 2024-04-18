@@ -8,6 +8,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score
+from sklearn.cluster import KMeans
+from sklearn.metrics import adjusted_rand_score
 
 """(1) この CSV を変数名 df というデータフレームに読み込みなさい。
 	ただし、A_id 列は削除すること。"""
@@ -79,13 +81,23 @@ y_test = y.iloc[1200:]
 
 # モデルのインスタンス作成
 #model = LogisticRegression(max_iter=1000, random_state=50)
-model = ExtraTreesClassifier()
+model = ExtraTreesClassifier(
+    n_estimators=100,    # 木の数
+    max_features='auto',  # 分割に考慮する特徴量の数
+    max_depth=None,      # 木の最大深さ
+    min_samples_split=2, # 分割するための最小サンプル数
+    min_samples_leaf=1,  # リーフが持つ最小サンプル数
+    bootstrap=False,     # ブートストラップサンプルを使用するか
+    random_state=42      # 再現性のためのランダムシード
+)
 #model = MLPClassifier(activation='relu', alpha=0.0001, batch_size='auto', beta_1=0.9,
 #                           beta_2=0.999, early_stopping=False, epsilon=1e-08,
 #                           hidden_layer_sizes=(30,30,30), max_iter=10000)
 
 # モデルの訓練
 model.fit(X_train, y_train)
+
+#（7）モデルの評価を行いなさい。1201行目以降のデータをテストデータにしてみましょう。
 
 # 訓練データとテストデータの予測値を計算
 y_pred_train = model.predict(X_train)
@@ -97,3 +109,16 @@ test_accuracy = accuracy_score(y_test, y_pred_test)
 
 print(f"訓練データ：{train_accuracy * 100}%")
 print(f"テストデータ；{test_accuracy * 100}%")
+
+#（8）Classのラベルを使わずに、教師なし学習でクラスタリングすると、ラベルの結果とどれくらいの差が出るか。
+
+kmeans = KMeans(n_clusters=2, n_init=10, random_state=42)
+kmeans.fit(X)
+
+# クラスタリング結果のラベル
+cluster_labels = kmeans.labels_
+
+# ラベルの結果との差
+ari = adjusted_rand_score(y, cluster_labels)
+
+print(f"ラベルの結果との差：{ari}")
