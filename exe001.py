@@ -82,9 +82,9 @@ y_test = y.iloc[1200:]
 # モデルのインスタンス作成
 #model = LogisticRegression(max_iter=1000, random_state=50)
 model = ExtraTreesClassifier(
-    n_estimators=100,    # 木の数
-    max_features='auto',  # 分割に考慮する特徴量の数
-    max_depth=None,      # 木の最大深さ
+    n_estimators=450,    # 木の数
+    max_features='sqrt',  # 分割に考慮する特徴量の数
+    max_depth=500,      # 木の最大深さ
     min_samples_split=2, # 分割するための最小サンプル数
     min_samples_leaf=1,  # リーフが持つ最小サンプル数
     bootstrap=False,     # ブートストラップサンプルを使用するか
